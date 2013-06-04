@@ -1,0 +1,16 @@
+﻿@{
+    if (IsPost)
+    {
+        LoginStatus status = Admin.Login(Request["AdminPass"]);
+        if (status == LoginStatus.Success)
+        {
+            Response.Redirect("~/Admin/");
+            Response.End();
+        }
+    }
+}
+
+<form method="post">
+    <input name="AdminPass" />
+    <input type="submit" value=" GO " />
+</form>

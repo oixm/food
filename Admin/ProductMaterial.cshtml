@@ -1,0 +1,28 @@
+﻿@{
+    // 登录校验
+    Admin.CheckLogin();
+    
+    // 参数
+    string action = UrlData[0];
+    int ProductID = Request["ProductID"].AsInt(0);
+    int MaterialID = Request["MaterialID"].AsInt(0);
+
+    switch (action)
+    {
+        case "Get":         // 列表
+            var list = Product.GetProductMaterial(ProductID);
+            Json.Write(list, Response.Output);
+            break;
+
+        case "Add":         // 添加
+            int Quantity = Request["Quantity"].AsInt(0);
+            Product.AddProductMaterial(ProductID, MaterialID, Quantity);
+            Response.Write("ok");
+            break;
+
+        case "Delete":      // 删除
+            Product.DeleteProductMaterial(ProductID, MaterialID);
+            Response.Write("ok");
+            break;
+    }
+}

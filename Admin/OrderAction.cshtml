@@ -1,0 +1,35 @@
+﻿@{
+    // 登录校验
+    Admin.CheckLogin();
+    
+    // 参数
+    string action = UrlData[0];
+    int OrderID = UrlData[1].AsInt(0);
+    
+    // 操作
+    switch (action)
+    {
+        // 配送订单
+        case "Shipping":
+            Order.Shipping(OrderID);
+            break;
+            
+        // 完成订单
+        case "Close":
+            Order.Close(OrderID);
+            break;
+            
+        // 取消订单
+        case "Cancel":
+            Order.Cancel(OrderID);
+            break;
+
+        // 删除
+        case "Delete":
+            Order.Delete(OrderID);
+            break;
+    }
+
+    // 重定向至前页
+    Response.Redirect(Request.UrlReferrer.ToString());
+}

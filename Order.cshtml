@@ -1,0 +1,101 @@
+﻿@{
+    // 登录校验
+    Authority.CheckLogin(true);
+
+    // 提交表单
+    if (IsPost)
+    {
+        // 收货信息
+        string Address = Request["Address"];
+        string Tel = Request["Tel"];
+        string strRequestTime = Request["ReqDate"] + " " + Request["ReqTime"];
+        DateTime RequestTime = DateTime.Parse(strRequestTime);
+        string Remark = Request["Remark"];
+
+        // 保存订单
+        decimal OrderID = Order.Save(Authority.CurrentUser.UserID, Address, Tel, RequestTime, Remark, Cart.GetItemList(), Cart.GetTotalPrice());
+
+        // 清除购物车
+        Cart.Clear();
+
+        // 重定向
+        Response.Redirect("~/OrderSuccess/" + OrderID);
+    }
+
+    // 布局和标题
+    Layout = "~/Layout/_FullLayout.cshtml";
+    Page.Title = "提交订单";
+}
+
+<script src="~/Scripts/jquery.timepicker.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // 电话号码校验
+        $.validator.addMethod("tel", function (value, element) {
+            var m = /^\d{11}$/;
+            var t = /^\d{8}$/;
+            return this.optional(element) || m.test(value) || t.test(value);
+        });
+        // 表单校验
+        $("#order").validate();
+        // 日期选择
+        $("#ReqDate").datepicker({
+            minDate: 0
+        });
+        // 时间选择
+        $("#ReqTime").timepicker();
+        // 提交表单
+        $("#btnsubmit").click(function () { $("#order").submit(); });
+    });
+</script>
+
+<h1>提交订单</h1>
+
+<h2>收货信息</h2>
+<div class="section">
+    <form id="order" method="post">
+        <dl class="w_100_800">
+            <dt>收货地址：</dt>
+            <dd><input name="Address" class="required t350" title="请填写收货地址" /></dd>
+            <dt>联系电话：</dt>
+            <dd><input name="Tel" value="@Authority.CurrentUser.Mobile" class="required tel t150" title="电话" /> 填写您的手机或电话号码，区号不必填写</dd>
+            <dt>送货时间：</dt>
+            <dd>
+            <input id="ReqDate" name="ReqDate" class="required t80" title="*" />
+            <select id="ReqTime" name="ReqTime"></select>（我们将尽量在您要求的时间之前送达）
+            </dd>
+            <dt>备注：</dt>
+            <dd><input name="Remark" class="t350" />（如果您有其它的要求，在此填写）</dd>
+        </dl>
+    </form>
+</div>
+
+<h2>订单明细</h2>
+<div class="section cartlist">
+    <table width="100%" cellspacing="1" class="simple">
+    <tr>
+        <th width="30">#</th>
+        <th>产品</th>
+        <th width="150">单价</th>
+        <th width="100">数量</th>
+    </tr>
+    @foreach (var item in Cart.GetItemList()) {
+    <tr>
+        <td>@item.No</td>
+        <td><a href="~/Product/@item.ID" target="_blank">@item.Name</a></td>
+        <td align="center">@item.Price.ToString("￥#,##0.00")</td>
+        <td align="center">@item.Quantity</td>
+    </tr>
+    }
+    </table>
+</div>
+
+<h2>结算信息</h2>
+<div class="section cartsumm">
+    <a href="~/Cart" class="live">返回修改购物车</a>
+    <a id="btnsubmit" href="javascript:void(0)" class="orderbtn"></a>
+    <div class="total">
+        <b>订单总价：</b><span class="price">@Cart.GetTotalPrice().ToString("￥#,##0.00")</span>
+    </div>
+</div>

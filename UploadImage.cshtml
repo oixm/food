@@ -1,0 +1,54 @@
+﻿@{
+    if (IsPost)
+    {
+        var file = Request.Files["ImageFile"];
+        if (file.ContentLength != 0)
+        {
+            string fileExt = Path.GetExtension(file.FileName);
+
+            string allowExts = ".jpg|.jpeg|.gif|.png|.bmp|.tif|.tiff";
+            if (allowExts.Split('|').Contains(fileExt.ToLower()))
+            {
+                string fileName = DateTime.Now.ToString("yyyyMMddHHmmssfff") + fileExt;
+                string filePath = Path.Combine(Server.MapPath("~/Upload/Food"), fileName);
+                file.SaveAs(filePath);
+                PageData["ImageFile"] = fileName;
+            }
+            else
+            {
+                Response.Write("NOT allow file extension: " + fileExt + " , image file only!");
+                Response.End();
+            }
+        }
+    }
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="gb2312" />
+<title>上传图片</title>
+</head>
+<body>
+
+@if (PageData["ImageFile"] == null) {
+
+    <form method="post" enctype="multipart/form-data">
+    上传图片：<br/>
+    <input type="file" name="ImageFile" size="40"/><br/><br/>
+    <input type="submit" value=" 上传 " onclick="this.value='正在上传，请稍候...';">
+    </form>
+
+} else {
+
+    <script>
+    var url = "/Upload/Food/@PageData["ImageFile"]";
+    window.opener.document.getElementById("txtUrl").value = url;
+    window.opener.UpdatePreview();
+    window.close();
+    </script>
+
+}
+
+</body>
+</html>

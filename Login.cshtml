@@ -1,0 +1,58 @@
+﻿@{
+    // 登录名、密码
+    string LoginName = null;
+    string LoginPass = null;
+
+    // 登录成功跳转
+    string URL = Request["BackURL"];
+
+    // 登录状态
+    LoginStatus? status = null;
+    
+    // 登录校验
+    if (IsPost)
+    {
+        LoginName = Request["LoginName"];
+        LoginPass = Request["LoginPass"];
+        status = Authority.Login(LoginName, LoginPass);
+        if (status == LoginStatus.Success) {
+            // 登录成功
+            if (URL == null) { URL = "~/Food"; }
+            Response.Redirect(URL);
+        }
+    }
+
+    // 布局和标题
+    Layout = "~/Layout/_SiteLayout.cshtml";
+    Page.Title = "登录";
+}
+
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#login").validate();
+    });
+</script>
+
+<h1>登录</h1>
+<div class="section">
+    <form id="login" method="post">
+        <dl class="w_100_400">
+            <dt>用户名：</dt>
+            <dd><input name="LoginName" value="@LoginName" class="required t150" title="请输入用户名" /></dd>
+            <dt>密　码：</dt>
+            <dd><input name="LoginPass" type="password" class="required t150" title="请输入密码" /></dd>
+            <dt><br/></dt>
+            <dd>
+                <input type="hidden" name="URL" value="@URL" />
+                <input type="submit" value="登录" class="button" />
+                还没有帐号？<a href="~/Register" class="live">点击这里</a>立即注册
+            </dd>
+        </dl>
+    </form>
+</div>
+
+@if (status != null)
+{
+    <script>$.jBox.info("@EnumUtils.GetDescription(status)", "登录");</script>
+}

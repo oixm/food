@@ -1,0 +1,37 @@
+﻿@{
+    var my = (Authority.IsLogin) ? Authority.CurrentUser : null;
+}
+<div class="header">
+    <div class="info">
+        <span class="cart">
+            @if (Cart.GetItemCount() != 0) {
+                <a href="~/Cart">购物车(<span class="highlight">@Cart.GetItemCount()</span>)</a>
+            }
+        </span>
+        <span class="profile">
+            @if (Authority.IsLogin) {
+                <span>欢迎您，</span>
+                <a href="~/My/" class="live">@my.UserName!</a>
+                <a href="~/Logout">退出</a>
+            } else {
+                <a href="~/Login">登录</a>
+                <a href="~/Register">注册</a>
+            }
+        </span>
+    </div>
+    <div class="logo"><a href="~/Food">双宝餐</a></div>
+    <div class="slogan">双宝妈妈用心制作，安心食品！</div>
+    <img class="mtb10" src="~/Images/banner.jpg" />
+</div>
+
+<div class="nav">
+    <ul>
+        <li><a href="~/Food">首页</a></li>
+        @foreach (var c in Product.GetCategoriesByHasProduct()) {
+        <li><a class="@(c.CategoryID==Page.NavID ? "active" : "")" href="~/Category/@c.CategoryID">@c.CategoryName</a></li>   
+        }
+    </ul>
+</div>
+
+<!-- 登录状态 for JS -->
+<script>var isLogin = @Authority.IsLogin.ToString().ToLower();</script>

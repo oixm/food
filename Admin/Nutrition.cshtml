@@ -1,0 +1,114 @@
+﻿@{
+    // 登录校验
+    Admin.CheckLogin();
+
+    // 提交
+    string action = UrlData[0];
+    if (action != "")
+    {
+        switch (action)
+        {
+            case "Add":             // 新增
+                Product.AddNutrition(UrlData[1], UrlData[2].AsInt(0));
+                break;
+            case "Update":          // 修改
+                Product.UpdateNutrition(UrlData[1].AsInt(0), UrlData[2], UrlData[3].AsInt(0));
+                break;
+            case "Delete":          // 删除
+                Product.DeleteNutrition(UrlData[1].AsInt(0));
+                break;
+        }
+        Response.Redirect("~/Admin/Nutrition");
+    }
+    
+    // 所有营养成分
+    var nutritions = Product.GetAllNutrition();
+
+    // 布局和标题
+    Layout = "~/Layout/_AdminLayout.cshtml";
+    Page.Title = "营养成分管理";
+}
+
+<script>
+    // 新增
+    function add() {
+        $.jBox("id:editpanel", {
+            title: "新增营养成分",
+            loaded: function (h) {
+                h.find("input").val("新的营养成分");
+                h.find("select")[0].selectedIndex = 0;
+            },
+            submit: function (v, h, f) {
+                window.location = "/Admin/Nutrition/Add/" + encodeURI(f.NutritionName) + "/" + f.UnitID;
+            }
+        });
+    }
+    // 修改
+    function update(nid, nname, uid) {
+        $.jBox("id:editpanel", {
+            title: "修改营养成分",
+            loaded: function (h) {
+                h.find("input").val(nname);
+                h.find("select").val(uid);
+            },
+            submit: function (v, h, f) {
+                window.location = "/Admin/Nutrition/Update/" + nid + "/" + encodeURI(f.NutritionName) + "/" + f.UnitID;
+            }
+        });
+    }
+    // 删除
+    function del(nid, nname) {
+        $.jBox.confirm("确定要删除营养成分 “" + nname + "” 吗？", "删除营养成分", function (v, h, f) {
+            if (v == "ok") window.location = "/Admin/Nutrition/Delete/" + nid;
+        });
+    }
+</script>
+
+<div id="editpanel" class="hidden">
+    <div class="pd20">
+        营养成分：<input name="NutritionName" class="t150" />
+        <br/><br>
+        计量单位：
+        <select name="UnitID">
+        @foreach (var u in Product.GetUnitsByType(2))
+        {
+            <option value="@u.UnitID">@u.UnitName</option>
+        }
+        </select>
+        <a href="~/Admin/Unit?UnitType=2" class="live ml10">单位管理</a>
+    </div>
+</div>
+
+<div class="breadcrumb">
+    <a href="~/Admin/">管理中心</a>
+    >
+    <b>营养成分管理</b>
+</div>
+
+<h2>所有营养成分</h2>
+<div class="section">
+    <table width="100%" cellspacing="1" class="simple">
+    <tr>
+        <th width="60">ID</th>
+        <th>营养成分名</th>
+        <th>计量单位</th>
+        <th width="150">操作</th>
+    </tr>
+    @foreach (var n in nutritions)
+    {
+        <tr>
+            <td align="center">@n.NutritionID</td>
+            <td align="center">@n.NutritionName</td>
+            <td align="center">@n.UnitName</td>
+            <td align="center">
+                <a href="javascript:update(@n.NutritionID, '@n.NutritionName', @n.UnitID)">[修改]</a>
+                <a href="javascript:del(@n.NutritionID, '@n.NutritionName')">[删除]</a>
+            </td>
+        </tr>
+    }
+    </table>
+    <div class="mt20">
+        <a href="javascript:add()" class="button">新增营养成分</a>
+        <a href="~/Admin/Unit?UnitType=2" class="live ml20">计量单位管理</a>
+    </div>
+</div>

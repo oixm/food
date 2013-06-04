@@ -1,0 +1,112 @@
+﻿@{
+    // 登录校验
+    Admin.CheckLogin();
+    
+    // 参数
+    int MaterialID = UrlData[0].AsInt(0);
+
+    // 更新材料
+    if (IsPost)
+    {
+        string MaterialName = Request["MaterialName"];
+        int UnitID = Request["UnitID"].AsInt(0);
+        Product.UpdateMaterial(MaterialID, MaterialName, UnitID);
+        PageData["Update"] = "Success";
+    }
+
+    // 页面数据
+    var m = Product.GetMaterialByID(MaterialID);
+    var units = Product.GetUnitsByType(1);
+
+    // 布局和标题
+    Layout = "~/Layout/_AdminLayout.cshtml";
+    Page.Title = m.MaterialName;
+}
+
+<div class="breadcrumb">
+    <a href="~/Admin/">管理中心</a>
+    >
+    <a href="~/Admin/Material">制作材料管理</a>
+    >
+    <b>@m.MaterialName</b>
+</div>
+
+<h2>修改材料</h2>
+<div class="section">
+    <form method="post">
+        <dl class="w_100_600">
+            <dt>材料名称：</dt>
+            <dd><input name="MaterialName" value="@m.MaterialName" class="t150" /></dd>
+            <dt>计量单位：</dt>
+            <dd>
+                <select name="UnitID">
+                @foreach (var u in units)
+                {
+                    <option value="@u.UnitID" selected="@(m.UnitID==u.UnitID)">@u.UnitName</option>
+                }
+                </select>
+                <a href="~/Admin/Unit?UnitType=1" class="live ml20">单位管理</a>
+            </dd>
+            <dt><br/></dt>
+            <dd><input type="submit" value=" 保 存 " class="button" /></dd>
+        </dl>
+    </form>
+    @if (PageData["Update"] == "Success")
+    {
+        <script>$.jBox.info("修改材料成功！", "修改材料");</script>
+    }
+</div>
+
+<h2>营养成分</h2>
+<div class="section">
+    <dl id="MaterialNutrition" class="w_100_600"></dl>
+    <br/><br/>
+    <a href="javascript:addNutrition()" class="button">添加营养成分</a>
+    <a href="~/Admin/Nutrition" class="live ml20">营养成分管理</a>
+    <!-- 添加成分窗口 -->
+    <div id="nutritionEditor" class="hidden">
+        <div class="pd20">
+            成分：
+            <select name="NutritionID">
+            @foreach (var n in Product.GetAllNutrition())
+            {
+                <option value="@n.NutritionID">@n.NutritionName (@n.UnitName)</option>
+            }
+            </select>
+            <br/><br/>
+            数量：<input name="Quantity" value="0.00" class="t80" />
+        </div>
+    </div>
+</div>
+<script>
+    // 加载材料成分
+    function loadMaterialNutrition() {
+        $.getJSON("/Admin/MaterialNutrition/Get?MaterialID=@MaterialID", function(data){
+            $("#MaterialNutrition").empty();
+            $.each(data, function(i, d) {
+                var dt = $("<dt>" + d.NutritionName + "：</dt>");
+                var dd = $("<dd>" + d.Quantity + " " + d.UnitName + " <a href='javascript:delNutrition(@MaterialID, " + d.NutritionID + ")' onclick=\"return confirm('删除这个营养成分？')\">[删除]</a></dd>");
+                $("#MaterialNutrition").append(dt).append(dd);
+            });
+        });
+    }
+    // 首次加载
+    loadMaterialNutrition();
+    // 添加营养成分
+    function addNutrition() {
+        $.jBox("id:nutritionEditor", {
+            title: "添加营养成分",
+            submit: function (v, h, f) {
+                $.get("/Admin/MaterialNutrition/Add?MaterialID=@MaterialID&NutritionID=" + f.NutritionID + "&Quantity=" + f.Quantity, function(data){
+                    if (data == "ok") loadMaterialNutrition();
+                });
+            }
+        });
+    }
+    // 删除产品材料
+    function delNutrition(mid, nid) {
+        $.post("/Admin/MaterialNutrition/Delete?MaterialID=" + mid + "&NutritionID=" + nid, function(data){
+            if (data == "ok") loadMaterialNutrition();
+        });
+    }
+</script>

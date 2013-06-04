@@ -1,0 +1,47 @@
+﻿@{
+    // 登录校验
+    Authority.CheckLogin(true);
+
+    // 布局和标题
+    Layout = "~/Layout/_MyLayout.cshtml";
+    Page.Title = "我的订单";
+}
+
+<div class="breadcrumb">
+    <a href="~/My/">会员中心</a>
+    >
+    <b>我的订单</b>
+</div>
+
+<h2>我的订单</h2>
+<div class="section">
+    <table width="100%" cellspacing="1" class="simple">
+    <tr>
+        <th width="60">订单编号</th>
+        <th>订单产品</th>
+        <th>下单日期</th>
+        <th>订单总价</th>
+        <th>状态</th>
+        <th>操作</th>
+    </tr>
+    @foreach (var o in Order.GetOrdersByUserID(Authority.CurrentUser.UserID)) {
+        <tr>
+            <td align="center"><a href="~/My/OrderDetail/@o.OrderID">@o.OrderNo</a></td>
+            <td>
+                @foreach (var d in Order.GetOrderDetails(o.OrderID)) {
+                    <a href="~/Product/@d.ProductID" title="@d.ProductName" target="_blank"><img src="~/Upload/Food/@d.Photo" class="thumb" /></a>
+                }
+            </td>
+            <td align="center">@o.OrderTime.ToString("yyyy-MM-dd")<br />@o.OrderTime.ToString("HH:mm:ss")</td>
+            <td align="center">@o.TotalPrice.ToString("￥#,##0.00")</td>
+            <td align="center"><span class="ordst"><span class="@((OrderStatus)o.Status)">@EnumUtils.GetDescription(typeof(OrderStatus), o.Status)</span></span></td>
+            <td align="center">
+                <a href="~/My/OrderDetail/@o.OrderID">[查看]</a>
+                @if ((OrderStatus)o.Status == OrderStatus.Submit) {
+                    <a href="~/My/OrderAction/Cancel/@o.OrderID" onclick="return confirm('确定要取消订单吗？')">[取消]</a>
+                }
+            </td>
+        </tr>
+    }
+    </table>
+</div>

@@ -1,0 +1,19 @@
+﻿<div class="footer">
+    <hr />
+    <div class="mtb20">
+        Copyright &copy; hiemma.cn
+    </div>
+</div>
+
+@if (Request.Url.Host.ToLower() == "hiemma.cn")
+{
+    <!-- 流量统计 -->
+    <div class="hidden">
+	    <script>
+	    // cnzz
+	    $(document).ready(function(){
+		    $.getScript("http://s6.cnzz.com/stat.php?id=5270449&web_id=5270449");
+	    });
+	    </script>
+    </div>
+}

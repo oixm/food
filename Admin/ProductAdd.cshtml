@@ -1,0 +1,63 @@
+﻿@{
+    // 登录校验
+    Admin.CheckLogin();
+
+    // 提交表单
+    if (IsPost)
+    {
+        decimal ProductID = Product.Add(Request["ProductName"], Request["Category"].AsInt(0), Request["Price"].AsDecimal(0), Request["Inventory"].AsInt(0), Request["Hot"].AsInt(0), Request["Status"].AsInt(0));
+        Response.Redirect("~/Admin/ProductDetail/" + ProductID);
+    }
+    
+    // 参数
+    var category = Product.GetAllCategory();
+
+    // 布局和标题
+    Layout = "~/Layout/_AdminLayout.cshtml";
+    Page.Title = "新增产品";
+}
+
+<div class="breadcrumb">
+    <a href="~/Admin/">管理中心</a>
+    >
+    <a href="~/Admin/Product">产品管理</a>
+    >
+    <b>新增产品</b>
+</div>
+
+<h2>新增产品</h2>
+<div class="section">
+    <form method="post">
+        <dl class="w_100_600">
+            <dt>产品名称：</dt>
+            <dd><input name="ProductName" class="t150" /></dd>
+            <dt>类型：</dt>
+            <dd>
+                <select name="Category">
+                @foreach (var c in category)
+                {
+                    <option value="@c.CategoryID">@c.CategoryName</option>
+                }
+                </select>
+                <a href="~/Admin/Category" class="live">类型管理</a>
+            </dd>
+            <dt>价格：</dt>
+            <dd><input name="Price" class="t150" /></dd>
+            <dt>库存：</dt>
+            <dd><input name="Inventory" class="t150" /></dd>
+            <dt>标识：</dt>
+            <dd><label><input type="checkbox" name="Hot" value="1" />热销餐品</label></dd>
+            <dt>状态：</dt>
+            <dd>
+                <select name="Status">
+                @foreach (int val in Enum.GetValues(typeof(ProductStatus)))
+                {
+                    <option value="@val" selected="@(val==1)">@EnumUtils.GetDescription(typeof(ProductStatus), val)</option>
+                }
+                </select>
+            </dd>
+            <dt><br/></dt>
+            <dd><input type="submit" value=" 保 存 " class="button" /></dd>
+        </dl>
+    </form>
+</div>

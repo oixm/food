@@ -1,0 +1,10 @@
+﻿@{
+    // 登录校验
+    Admin.CheckLogin();
+    
+    // 参数
+    int ProductID = UrlData[0].AsInt(0);
+    Product.Delete(ProductID);
+
+    Response.Redirect("~/Admin/Product");
+}

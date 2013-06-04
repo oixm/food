@@ -1,0 +1,58 @@
+﻿@{
+    // 注册状态
+    RegisterStatus? status = null;
+    
+    // 提交表单
+    if (IsPost)
+    {
+        PageData["LoginName"] = Request["LoginName"].Trim();
+        PageData["LoginPass"] = Request["LoginPass"];
+        PageData["UserName"] = Request["UserName"].Trim();
+        PageData["Email"] = Request["Email"].Trim();
+        PageData["Mobile"] = Request["Mobile"].Trim();
+        status = Users.Register(PageData["LoginName"], PageData["LoginPass"], PageData["UserName"], PageData["Email"], PageData["Mobile"]);
+        if (status == RegisterStatus.Success)
+        {
+            Authority.Login(PageData["LoginName"], PageData["LoginPass"]);
+            Response.Redirect("~/Food");
+        }
+    }
+    
+    // 布局和标题
+    Layout = "~/Layout/_SiteLayout.cshtml";
+    Page.Title = "注册新用户";
+}
+
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#register").validate();
+    });
+</script>
+
+<h2>注册新用户</h2>
+<div class="section">
+    <form id="register" method="post">
+        <dl class="w_100_400">
+            <dt>帐号：</dt>
+            <dd><input name="LoginName" value="@PageData["LoginName"]" class="required t150" minlength="4" maxlength="20" title="帐号" /> 帐号应为 4-20 位</dd>
+            <dt>密码：</dt>
+            <dd><input type="password" id="LoginPass" name="LoginPass" class="required t150" minlength="6" maxlength="20" title="密码" /> 密码为6位以上字母数字组成</dd>
+            <dt>密码确认：</dt>
+            <dd><input type="password" name="LoginPass2" class="t150" equalTo="#LoginPass" title="密码确认" /> 再次确认您的密码</dd>
+            <dt>昵称：</dt>
+            <dd><input name="UserName" value="@PageData["UserName"]" class="required t150" title="昵称" /> 给自己起个好听的昵称吧</dd>
+            <dt>Email：</dt>
+            <dd><input name="Email" value="@PageData["Email"]" class="required email t150" title="Email" /> 填写您常用的 Email</dd>
+            <dt>手机号：</dt>
+            <dd><input name="Mobile" value="@PageData["Mobile"]" class="required t150" title="手机号" /> 填写您的手机号</dd>
+            <dt><br/></dt>
+            <dd><input type="submit" value="创建新用户" class="button" /></dd>
+        </dl>
+    </form>
+</div>
+
+@if (status != null)
+{
+    <script>$.jBox.info("@EnumUtils.GetDescription(status)", "注册");</script>
+}

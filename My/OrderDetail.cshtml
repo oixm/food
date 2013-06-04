@@ -1,0 +1,76 @@
+﻿@{
+    // 登录校验
+    Authority.CheckLogin(true);
+
+    // 参数
+    int OrderID = UrlData[0].AsInt(0);
+    var o = Order.GetOrderByID(OrderID);
+
+    // 订单有效性
+    if (OrderID == 0 || !Order.IsOwner(Authority.CurrentUser.UserID, OrderID))
+    {
+        Response.Redirect("~/My/Order");
+    }
+
+    // 布局和标题
+    Layout = "~/Layout/_MyLayout.cshtml";
+    Page.Title = "订单详情";
+}
+
+<div class="breadcrumb">
+    <a href="~/My/">会员中心</a>
+    >
+    <a href="~/My/Order">我的订单</a>
+    >
+    <b>订单：@o.OrderNo</b>
+</div>
+
+<h2>订单状态</h2>
+<div class="section orderstatus">
+    订单编号：<span class="orderno">@o.OrderNo</span>
+    订单状态：<span class="ordst"><span class="@((OrderStatus)o.Status)">@EnumUtils.GetDescription(typeof(OrderStatus), o.Status)</span></span>
+    @if ((OrderStatus)o.Status == OrderStatus.Submit) {
+        <a href="~/My/OrderAction/Cancel/@o.OrderID" onclick="return confirm('确定要取消订单吗？')">[取消订单]</a>
+    }
+</div>
+
+<h2>收货信息</h2>
+<div class="section">
+    <dl class="w_100_600">
+        <dt>收货地址：</dt>
+        <dd>@o.Address</dd>
+        <dt>联系电话：</dt>
+        <dd>@o.Tel</dd>
+        <dt>送货时间：</dt>
+        <dd>@o.RequestTime.ToString("yyyy-MM-dd HH:mm")</dd>
+        <dt>备注：</dt>
+        <dd>@o.Remark</dd>
+    </dl>
+</div>
+
+<h2>订单明细</h2>
+<div class="section orderdetail">
+    <table width="100%" cellspacing="1" class="simple">
+    <tr>
+        <th width="30">#</th>
+        <th>产品</th>
+        <th width="150">单价</th>
+        <th width="100">数量</th>
+    </tr>
+    @foreach (var d in Order.GetOrderDetails(OrderID)) {
+    <tr>
+        <td>@d.DetailNo</td>
+        <td><a href="~/Product/@d.ProductID" target="_blank">@d.ProductName</a></td>
+        <td align="center">@d.Price.ToString("￥#,##0.00")</td>
+        <td align="center">@d.Quantity</td>
+    </tr>
+    }
+    </table>
+</div>
+
+<h2>结算信息</h2>
+<div class="section ordersumm">
+    <div class="total">
+        <b>订单总价：</b><span class="price">@o.TotalPrice.ToString("￥#,##0.00")</span>
+    </div>
+</div>

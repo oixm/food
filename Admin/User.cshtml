@@ -1,0 +1,56 @@
+﻿@{
+    // 登录校验
+    Admin.CheckLogin();
+
+    // 提交
+    string action = UrlData[0];
+    if (action == "Delete")
+    {
+        Users.Delete(UrlData[1].AsInt(0));
+        Response.Redirect("~/Admin/User");
+    }
+    
+    // 参数
+    IEnumerable<dynamic> list = Users.GetAllUsers();
+
+    // 布局和标题
+    Layout = "~/Layout/_AdminLayout.cshtml";
+    Page.Title = "用户管理";
+}
+
+<div class="breadcrumb">
+    <a href="~/Admin/">管理中心</a>
+    >
+    <b>用户管理</b>
+</div>
+
+<h2>所有用户列表</h2>
+<div class="section">
+    <table width="100%" cellspacing="1" class="simple">
+    <tr>
+        <th>用户ID</th>
+        <th>用户名</th>
+        <th>密码</th>
+        <th>昵称</th>
+        <th>Email</th>
+        <th>手机号</th>
+        <th>注册时间</th>
+        <th>最后登录</th>
+        <th>操作</th>
+    </tr>
+    @foreach (var u in list)
+    {
+        <tr>
+            <td align="center">@u.UserID</td>
+            <td align="center">@u.LoginName</td>
+            <td align="center">@u.LoginPass</td>
+            <td align="center">@u.UserName</td>
+            <td>@u.Email</td>
+            <td>@u.Mobile</td>
+            <td align="center">@u.RegTime.ToString("yyyy-MM-dd")<br />@u.RegTime.ToString("HH:mm:ss")</td>
+            <td align="center">@u.LastLoginTime.ToString("yyyy-MM-dd")<br />@u.LastLoginTime.ToString("HH:mm:ss")</td>
+            <td align="center"><a href="~/Admin/User/Delete/@u.UserID" onclick="return confirm('确定要从数据库中删除这个用户吗？')">[删除]</a></td>
+        </tr>
+    }
+    </table>
+</div>

@@ -1,0 +1,48 @@
+﻿@{
+    // 布局和标题
+    Layout = "~/Layout/_SiteLayout.cshtml";
+    Page.Title = "双宝餐";
+}
+
+<script src="~/Scripts/jquery.slides.min.js"></script>
+<script>
+    $(function(){
+        $("#slides").slidesjs({
+            width: 640,             // 宽
+            height: 480,            // 高
+            navigation: false,      // 不显示 Previous、Next
+            play: {
+                auto: true,             // 自动开始
+                effect: "slide",        // 动画模式 slide|fade
+                pauseOnHover: false,    // 鼠标移上停止
+                interval: 3000          // 播放间隔
+            }
+        });
+    });
+</script>
+
+<div id="slides">
+@foreach (var s in Slide.GetSlides()) {
+    <a href="@s.Link" target="_blank" title="@s.Title"><img src="~/Upload/Slide/@s.ImageUrl" width="640" height="480" /></a>
+}
+</div>
+
+@foreach (var c in Product.GetCategoriesByHasProduct()) {
+    <h2 class="titlebar">@c.CategoryName</h2>
+    <div class="section">
+        <ul class="prdlist">
+        @foreach (var p in Product.GetTopProductsByCategoryID(c.CategoryID, 4)) {
+            <li>
+                <a href="~/Product/@p.ProductID"><img src="~/Upload/Food/@p.Photo" class="product" /></a>
+                <div class="title">
+                    <a href="~/Product/@p.ProductID">@p.ProductName</a>
+                    @if (p.Hot == 1) {
+                        <span class="hot">(热销餐品)</span>
+                    }
+                </div>
+                <div class="price">@p.Price.ToString("￥#,##0.00")</div>
+            </li>
+        }
+        </ul>
+    </div>
+}

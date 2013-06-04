@@ -1,0 +1,22 @@
+﻿@{
+    int MaterialID = UrlData[0].AsInt(0);
+    var m = Product.GetMaterialByID(MaterialID);
+    
+    if (MaterialID == 0) { Response.Redirect("~/Food"); }
+
+    // 布局和标题
+    Layout = "~/Layout/_SiteLayout.cshtml";
+    Page.Title = m.MaterialName;
+}
+
+<h1>@m.MaterialName</h1>
+
+<h2>“@m.MaterialName” 营养成分</h2>
+<div class="section">    
+    <dl class="w_100_400">
+    @foreach (var n in Product.GetMaterialNutrition(MaterialID)) {
+        <dt>@n.NutritionName：</dt>
+        <dd>@(n.Quantity+n.UnitName)</dd>
+    }
+    </dl>
+</div>

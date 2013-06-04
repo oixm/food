@@ -1,0 +1,15 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="gb2312" />
+<title>@Page.Title</title>
+@RenderPage("~/Shared/_Head.cshtml")
+</head>
+<body>
+@RenderPage("~/Shared/_Header.cshtml")
+<div class="wrapper">
+    @RenderBody()
+</div>
+@RenderPage("~/Shared/_Footer.cshtml")
+</body>
+</html>

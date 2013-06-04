@@ -1,0 +1,28 @@
+﻿@{
+    // 登录校验
+    Admin.CheckLogin();
+    
+    // 参数
+    string action = UrlData[0];
+    int MaterialID = Request["MaterialID"].AsInt(0);
+    int NutritionID = Request["NutritionID"].AsInt(0);
+
+    switch (action)
+    {
+        case "Get":         // 列表
+            var list = Product.GetMaterialNutrition(MaterialID);
+            Json.Write(list, Response.Output);
+            break;
+
+        case "Add":         // 添加
+            decimal Quantity = Request["Quantity"].AsDecimal(0);
+            Product.AddMaterialNutrition(MaterialID, NutritionID, Quantity);
+            Response.Write("ok");
+            break;
+
+        case "Delete":      // 删除
+            Product.DeleteMaterialNutrition(MaterialID, NutritionID);
+            Response.Write("ok");
+            break;
+    }
+}

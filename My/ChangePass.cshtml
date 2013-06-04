@@ -1,0 +1,50 @@
+﻿@{
+    // 登录校验
+    Authority.CheckLogin(true);
+
+    ChangePassStatus? status = null;
+    
+    // 修改密码
+    if (IsPost)
+    {
+        status = Users.ChangePass(Authority.CurrentUser.UserID, Request["OldPass"], Request["NewPass"]);
+    }
+
+    // 布局和标题
+    Layout = "~/Layout/_MyLayout.cshtml";
+    Page.Title = "修改密码";
+}
+
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#ChangePass").validate();
+    });
+</script>
+
+<div class="breadcrumb">
+    <a href="~/My/">会员中心</a>
+    >
+    <b>修改密码</b>
+</div>
+
+<h2>修改密码</h2>
+<div class="section">
+    <form id="ChangePass" method="post">
+        <dl class="w_100_600">
+            <dt>原始密码：</dt>
+            <dd><input type="password" name="OldPass" class="required t150" title="请输入原始密码" /></dd>
+            <dt>新的密码：</dt>
+            <dd><input type="password" id="NewPass" name="NewPass" class="required t150" minlength="6" maxlength="20" title="密码应为6-20位" /></dd>
+            <dt>再次确认：</dt>
+            <dd><input type="password" id="NewPass2" name="NewPass2" class="t150" equalTo="#NewPass" title="两次输入的密码应一致" /></dd>
+            <dt><br/></dt>
+            <dd><input type="submit" value="修改密码" class="button" /></dd>
+        </dl>
+    </form>
+</div>
+
+@if (status != null)
+{
+    <script>$.jBox.info("@EnumUtils.GetDescription(status)", "修改密码");</script>
+}

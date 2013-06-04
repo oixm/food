@@ -1,0 +1,38 @@
+﻿@{
+    // 布局和标题
+    Layout = "~/Layout/_FullLayout.cshtml";
+    Page.Title = "购物车";
+}
+
+<h1>我的购物车</h1>
+
+<div class="section cartlist">
+    <table width="100%" cellspacing="1" class="simple">
+    <tr>
+        <th>产品</th>
+        <th>单价</th>
+        <th>数量</th>
+        <th>操作</th>
+    </tr>
+    @foreach (var item in Cart.GetItemList()) {
+    <tr>
+        <td>
+            <a href="~/Product/@item.ID" target="_blank"><img src="~/ProductImage/@item.ID" class="thumb" /></a>
+            <a href="~/Product/@item.ID" target="_blank">@item.Name</a>
+        </td>
+        <td align="center">@item.Price.ToString("￥#,##0.00")</td>
+        <td align="center">@item.Quantity</td>
+        <td align="center"><a href="~/CartAction/Delete/@item.ID">删除</a></td>
+    </tr>
+    }
+    </table>
+</div>
+
+<div class="section cartsumm">
+    <a href="~/Food" class="live mr20">继续购物</a>
+    <a href="~/CartAction/Clear" class="live">清空购物车</a>
+    <a href="~/Order" class="cashbtn"></a>
+    <div class="total">
+        <b>总计：</b><span class="price">@Cart.GetTotalPrice().ToString("￥#,##0.00")</span>
+    </div>
+</div>

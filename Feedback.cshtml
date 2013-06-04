@@ -1,0 +1,10 @@
+﻿@{
+    // 登录校验
+    Authority.CheckLogin();
+
+    // 提交
+    Feedback.Add(Authority.CurrentUser.UserID, Request["Suggestion"]);
+
+    // 返回
+    Response.Write("ok");
+}

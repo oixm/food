@@ -1,0 +1,100 @@
+﻿@{
+    // 登录校验
+    Admin.CheckLogin();
+
+    // 参数
+    int UnitType = Request["UnitType"].AsInt(0);
+    int UnitID = Request["UnitID"].AsInt(0);
+    
+    // 提交
+    string action = UrlData[0];
+    if (action != "")
+    {
+        switch (action)
+        {
+            case "Add":             // 新增
+                Product.AddUnit(Request["UnitName"], UnitType);
+                break;
+            case "Update":          // 修改
+                Product.UpdateUnit(UnitID, Request["UnitName"]);
+                break;
+            case "Delete":          // 删除
+                Product.DeleteUnit(UnitID);
+                break;
+        }
+        Response.Redirect("~/Admin/Unit?UnitType=" + UnitType);
+    }
+    
+    // 所有计量单位
+    var units = Product.GetUnitsByType(UnitType);
+
+    // 布局和标题
+    Layout = "~/Layout/_AdminLayout.cshtml";
+    Page.Title = "计量单位管理";
+}
+
+<script>
+    // 新增
+    function add() {
+        var html = "<div class='pd20'>请输入新的计量单位：<input name='UnitName' value='新的计量单位' class='t150'></div>";
+        $.jBox(html, {
+            title: "新增计量单位",
+            submit: function (v, h, f) {
+                window.location = "/Admin/Unit/Add?UnitType=@UnitType&UnitName=" + encodeURI(f.UnitName);
+            }
+        });
+    }
+    // 修改
+    function update(uid, uname) {
+        var html = "<div class='pd20'>请输入新的计量单位：<input name='UnitName' value='" + uname + "' class='t150'></div>";
+        $.jBox(html, {
+            title: "修改计量单位",
+            submit: function (v, h, f) {
+                window.location = "/Admin/Unit/Update?UnitType=@UnitType&UnitID=" + uid + "&UnitName=" + encodeURI(f.UnitName);
+            }
+        });
+    }
+    // 删除
+    function del(uid, uname) {
+        $.jBox.confirm("确定要删除计量单位 “" + uname + "” 吗？", "删除计量单位", function (v, h, f) {
+            if (v == "ok") window.location = "/Admin/Unit/Delete?UnitType=@UnitType&UnitID=" + uid;
+        });
+    }
+</script>
+
+<div class="breadcrumb">
+    <a href="~/Admin/">管理中心</a>
+    >
+    @if (UnitType == 1)
+    {
+        <a href="~/Admin/Material">制作材料管理</a>
+    } else
+    {
+        <a href="~/Admin/Nutrition">营养成分管理</a>
+    }
+    >
+    <b>计量单位管理</b>
+</div>
+
+<h2>所有类型</h2>
+<div class="section">
+    <table width="100%" cellspacing="1" class="simple">
+    <tr>
+        <th width="60">ID</th>
+        <th>计量单位</th>
+        <th width="200">操作</th>
+    </tr>
+    @foreach (var u in units)
+    {
+        <tr>
+            <td align="center">@u.UnitID</td>
+            <td align="center">@u.UnitName</td>
+            <td align="center">　
+                <a href="javascript:update(@u.UnitID, '@u.UnitName')">[修改]</a>
+                <a href="javascript:del(@u.UnitID, '@u.UnitName')">[删除]</a>
+            </td>
+        </tr>
+    }
+    </table>
+    <div class="mt20"><a href="javascript:add()" class="button">新增计量单位</a></div>
+</div>

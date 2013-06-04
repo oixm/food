@@ -1,0 +1,6 @@
+﻿@{
+    int ProductID = UrlData[0].AsInt(0);
+    var p = Product.GetProductByID(ProductID);
+    var url = "~/Upload/Food/" + @p.Photo;
+    Response.Redirect(url);
+}

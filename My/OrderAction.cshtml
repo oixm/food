@@ -1,0 +1,23 @@
+﻿@{
+    // 登录校验
+    Authority.CheckLogin();
+    
+    // 参数
+    string action = UrlData[0];
+    int OrderID = UrlData[1].AsInt(0);
+    
+    // 校验订单权限
+    if (!Order.IsOwner(Authority.CurrentUser.UserID, OrderID)) { return; }
+
+    // 操作
+    switch (action)
+    {
+        // 取消订单
+        case "Cancel":
+            Order.Cancel(OrderID);
+            break;
+    }
+
+    // 重定向至前页
+    Response.Redirect(Request.UrlReferrer.ToString());
+}

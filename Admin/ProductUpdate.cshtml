@@ -1,0 +1,57 @@
+﻿@{
+    // 登录校验
+    Admin.CheckLogin();
+    
+    // 参数
+    int ProductID = UrlData[0].AsInt(0);
+    string action = UrlData[1];
+    var p = Product.GetProductByID(ProductID);
+
+    // 更新
+    switch (action)
+    {
+        case "Photo":           // 图片
+            var file = Request.Files["Photo"];
+            string fileName = DateTime.Now.ToString("yyyyMMddHHmmssfff") + Path.GetExtension(file.FileName);
+            string filePath = Path.Combine(Server.MapPath("~/Upload/Food"), fileName);
+            file.SaveAs(filePath);
+            Product.UpdatePhoto(ProductID, fileName);
+            Response.Redirect("~/Admin/ProductDetail/" + ProductID);
+            break;
+        case "Basic":           // 基本信息
+            Product.Update(ProductID, Request["ProductName"], Request["Category"].AsInt(0), Request["Price"].AsDecimal(0), Request["Inventory"].AsInt(0), Request["Hot"].AsInt(0), Request["Status"].AsInt(0));
+            break;
+        case "Description":     // 产品介绍
+            Product.UpdateDescription(ProductID, Request.Unvalidated().Form["Description"]);
+            break;
+        case "Story":           // 产品特征
+            Product.UpdateStory(ProductID, Request.Unvalidated().Form["Story"]);
+            break;
+        case "Process":         // 制作过程
+            Product.UpdateProcess(ProductID, Request.Unvalidated().Form["Process"]);
+            break;
+    }
+
+    // 布局和标题
+    Layout = "~/Layout/_AdminLayout.cshtml";
+    Page.Title = "更新产品";
+}
+
+<div class="breadcrumb">
+    <a href="~/Admin/">管理中心</a>
+    >
+    <a href="~/Admin/Product">产品管理</a>
+    >
+    <a href="~/Admin/ProductDetail/@ProductID">@p.ProductName</a>
+</div>
+
+<h2>更新产品</h2>
+<div class="section">
+    修改成功！
+    <a href="~/Admin/ProductDetail/@ProductID" class="button">返回</a>
+    <script>
+        setTimeout(function () {
+            window.location = "/Admin/ProductDetail/@ProductID";
+        }, 1000);
+    </script>
+</div>

@@ -1,0 +1,27 @@
+﻿@{
+    // 参数
+    string action = UrlData[0];
+    int ProductID = UrlData[1].AsInt(0);
+
+    // 操作
+    switch (action)
+    {
+        // 添加
+        case "Add":
+            Cart.Add(ProductID, 1);
+            break;
+            
+        // 删除
+        case "Delete":
+            Cart.Delete(ProductID);
+            break;
+            
+        // 清空
+        case "Clear":
+            Cart.Clear();
+            break;
+    }
+
+    // 重定向
+    Response.Redirect("~/Cart");
+}

@@ -1,0 +1,88 @@
+﻿@{
+    // 登录校验
+    Admin.CheckLogin();
+    
+    // 参数
+    OrderStatus status = (OrderStatus)Request["Status"].AsInt(1);
+    IEnumerable<dynamic> OrderList;
+    if (status == 0)
+    {
+        OrderList = Order.GetAllOrders();
+    }
+    else
+    {
+        OrderList = Order.GetOrdersByStatus(status);
+    }
+
+    // 布局和标题
+    Layout = "~/Layout/_AdminLayout.cshtml";
+    Page.Title = "所有订单";
+}
+
+<div class="breadcrumb">
+    <a href="~/Admin/">管理中心</a>
+    >
+    <b>订单管理</b>
+</div>
+
+<h2>查询订单</h2>
+<div class="section">
+    订单状态：
+    <select id="OrderStatus">
+        <option value="0">所有订单</option>
+        @foreach (int val in Enum.GetValues(typeof(OrderStatus)))
+        {
+            <option value="@val" selected="@(val==(int)status)">@EnumUtils.GetDescription(typeof(OrderStatus), val)</option>
+        }
+    </select>
+    <script>
+        $("#OrderStatus").change(function () {
+            location = "?Status=" + $(this).val();
+        });
+    </script>
+</div>
+
+<h2>查询结果</h2>
+<div class="section">
+    <table width="100%" cellspacing="1" class="simple">
+    <tr>
+        <th width="60">订单编号</th>
+        <th>订单产品</th>
+        <th>下单用户</th>
+        <th>下单日期</th>
+        <th>订单总价</th>
+        <th>状态</th>
+        <th>操作</th>
+    </tr>
+    @foreach (var o in OrderList)
+    {
+        <tr>
+            <td align="center"><a href="~/Admin/OrderDetail/@o.OrderID">@o.OrderNo</a></td>
+            <td>
+                @foreach (var d in Order.GetOrderDetails(o.OrderID))
+                {
+                    <a href="~/Product/@d.ProductID" title="@d.ProductName" target="_blank"><img src="~/Upload/Food/@d.Photo" class="thumb" /></a>
+                }
+            </td>
+            <td align="center"><a href="#">@o.UserName</a></td>
+            <td align="center">@o.OrderTime.ToString("yyyy-MM-dd")<br />@o.OrderTime.ToString("HH:mm:ss")</td>
+            <td align="center">@o.TotalPrice.ToString("￥#,##0.00")</td>
+            <td align="center"><span class="ordst"><span class="@((OrderStatus)o.Status)">@EnumUtils.GetDescription(typeof(OrderStatus), o.Status)</span></span></td>
+            <td align="center">
+                <a href="~/Admin/OrderDetail/@o.OrderID">[详细]</a>
+                @if ((OrderStatus)o.Status == OrderStatus.Submit)
+                {
+                    <a href="~/Admin/OrderAction/Shipping/@o.OrderID" onclick="return confirm('确定要将订单更改为“配送中”状态吗？')">[配送]</a>
+                    <a href="~/Admin/OrderAction/Cancel/@o.OrderID" onclick="return confirm('确定要取消订单吗？')">[取消]</a>
+                }
+                @if ((OrderStatus)o.Status == OrderStatus.Shipping)
+                {
+                    <a href="~/Admin/OrderAction/Close/@o.OrderID" onclick="return confirm('确定要将订单更改为“完成”状态吗？')">[完成]</a>
+                    <a href="~/Admin/OrderAction/Cancel/@o.OrderID" onclick="return confirm('确定要取消订单吗？')">[取消]</a>
+                }
+                <a href="~/Admin/OrderAction/Delete/@o.OrderID" onclick="return confirm('将从数据库中删除订单，此操作不可恢复！\n\n确定要删除？')">[删除]</a>
+            </td>
+        </tr>
+    }
+    </table>
+</div>

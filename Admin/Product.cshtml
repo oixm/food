@@ -1,0 +1,57 @@
+﻿@{
+    // 登录校验
+    Admin.CheckLogin();
+    
+    // 参数
+    IEnumerable<dynamic> ProductList = Product.GetAllProducts();
+
+    // 布局和标题
+    Layout = "~/Layout/_AdminLayout.cshtml";
+    Page.Title = "所有产品";
+}
+
+<div class="breadcrumb">
+    <a href="~/Admin/">管理中心</a>
+    >
+    <b>产品管理</b>
+</div>
+
+<h2>所有产品</h2>
+<div class="section">
+    <table width="100%" cellspacing="1" class="simple">
+    <tr>
+        <th>ID</th>
+        <th>产品名称</th>
+        <th>类别</th>
+        <th>价格</th>
+        <th>状态</th>
+        <th>库存</th>
+        <th>热销</th>
+        <th>操作</th>
+    </tr>
+    @foreach (var p in ProductList)
+    {
+        <tr>
+            <td align="center"><a href="#">@p.ProductID</a></td>
+            <td>
+                <a href="~/Product/@p.ProductID" title="@p.ProductName" target="_blank"><img src="~/Upload/Food/@p.Photo" class="thumb" /></a>
+                @p.ProductName
+            </td>
+            <td align="center">@p.CategoryName</td>
+            <td align="right">@p.Price.ToString("￥#,##0.00")</td>
+            <td align="center"><span class="prdst"><span class="@((ProductStatus)p.Status)">@EnumUtils.GetDescription(typeof(ProductStatus), p.Status)</span></span></td>
+            <td align="center">@p.Inventory</td>
+            <td align="center">
+                @if (p.Hot == 1) {
+                    <span class="hot">热销</span>
+                }
+            </td>
+            <td align="center">
+                <a href="~/Admin/ProductDetail/@p.ProductID">[修改]</a>
+                <a href="~/Admin/ProductDelete/@p.ProductID" onclick="return confirm('将从数据库中删除该产品，确定吗？\n\n如果只是暂时不显示，将状态设为“下架”即可。')">[删除]</a>
+            </td>
+        </tr>
+    }
+    </table>
+    <div class="mt20"><a href="~/Admin/ProductAdd" class="button">新增产品</a></div>
+</div>

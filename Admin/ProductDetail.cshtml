@@ -1,0 +1,172 @@
+﻿@{
+    // 登录校验
+    Admin.CheckLogin();
+    
+    // 参数
+    int ProductID = UrlData[0].AsInt(0);
+    var p = Product.GetProductByID(ProductID);
+    var category = Product.GetAllCategory();
+
+    // 布局和标题
+    Layout = "~/Layout/_AdminLayout.cshtml";
+    Page.Title = p.ProductName;
+}
+
+<script src="~/fckeditor/fckeditor.js"></script>
+
+<div class="breadcrumb">
+    <a href="~/Admin/">管理中心</a>
+    >
+    <a href="~/Admin/Product">产品管理</a>
+    >
+    <b>@p.ProductName</b>
+</div>
+
+<h2>@p.ProductName</h2>
+<div class="section prodshow">
+    <a href="~/Product/@p.ProductID" target="_blank"><img src="~/Upload/Food/@p.Photo" class="product" /></a>
+    <form method="post" action="~/Admin/ProductUpdate/@p.ProductID/Photo" enctype="multipart/form-data">
+        <div>更改图片：</div>
+        <div><input type="file" name="Photo" size="40" /></div>
+        <div><input type="submit" value=" 上 传 " class="button" onclick="this.value='正在上传，请稍候...';" /></div>
+    </form>
+</div>
+
+<h2>基本信息</h2>
+<div class="section">
+    <form method="post" action="~/Admin/ProductUpdate/@p.ProductID/Basic">
+        <dl class="w_100_600">
+            <dt>产品名称：</dt>
+            <dd><input name="ProductName" value="@p.ProductName" class="t150" /></dd>
+            <dt>类型：</dt>
+            <dd>
+                <select name="Category">
+                @foreach (var c in category)
+                {
+                    <option value="@c.CategoryID" selected="@(c.categoryID==p.CategoryID)">@c.CategoryName</option>
+                }
+                </select>
+                <a href="~/Admin/Category" class="live ml20">类型管理</a>
+            </dd>
+            <dt>价格：</dt>
+            <dd><input name="Price" value="@p.Price.ToString("##0.00")" class="t150" /></dd>
+            <dt>库存：</dt>
+            <dd><input name="Inventory" value="@p.Inventory" class="t150" /></dd>
+            <dt>标识：</dt>
+            <dd><label><input type="checkbox" name="Hot" value="1" checked="@(p.Hot==1)" />热销餐品</label></dd>
+            <dt>状态：</dt>
+            <dd>
+                <select name="Status">
+                @foreach (int val in Enum.GetValues(typeof(ProductStatus)))
+                {
+                    <option value="@val" selected="@(val==p.Status)">@EnumUtils.GetDescription(typeof(ProductStatus), val)</option>
+                }
+                </select>
+            </dd>
+            <dt><br/></dt>
+            <dd><input type="submit" value=" 保 存 " class="button" /></dd>
+        </dl>
+    </form>
+</div>
+
+<h2>产品介绍</h2>
+<div class="section">
+    <form method="post" action="~/Admin/ProductUpdate/@p.ProductID/Description">
+        <textarea id="Description" name="Description">@p.Description</textarea>
+        <br /><br />
+        <input type="submit" value=" 保 存 " class="button" />
+    </form>
+</div>
+<script>
+    var editDesc = new FCKeditor("Description");
+    editDesc.Width = 640;
+    editDesc.Height = 300;
+    editDesc.ToolbarSet = "Doc";
+    editDesc.ReplaceTextarea();
+</script>
+
+<h2>产品特征</h2>
+<div class="section">
+    <form method="post" action="~/Admin/ProductUpdate/@p.ProductID/Story">
+        <textarea id="Story" name="Story">@p.Story</textarea>
+        <br /><br />
+        <input type="submit" value=" 保 存 " class="button" />
+    </form>
+</div>
+<script>
+    var editStory = new FCKeditor("Story");
+    editStory.Width = 640;
+    editStory.Height = 300;
+    editStory.ToolbarSet = "Doc";
+    editStory.ReplaceTextarea();
+</script>
+
+<h2>制作材料</h2>
+<div class="section">
+    <dl id="ProductMaterial" class="w_100_600"></dl>
+    <br/><br/>
+    <a href="javascript:addMaterial()" class="button">添加材料</a>
+    <!-- 添加材料窗口 -->
+    <div id="materialEditor" class="hidden">
+        <div class="pd20">
+            材料：
+            <select name="MaterialID">
+            @foreach (var m in Product.GetAllMaterials())
+            {
+                <option value="@m.MaterialID">@m.MaterialName (@m.UnitName)</option>
+            }
+            </select>
+            <a href="~/Admin/Material" class="live ml10">材料管理</a>
+            <br/><br/>
+            数量：<input name="Quantity" value="0" class="t80" />
+        </div>
+    </div>
+</div>
+<script>
+    // 加载产品材料
+    function loadProductMaterial() {
+        $.getJSON("/Admin/ProductMaterial/Get?ProductID=@ProductID", function(data){
+            $("#ProductMaterial").empty();
+            $.each(data, function(i, d) {
+                var dt = $("<dt><a href='/Material/" + d.MaterialID + "' target='_blank' class='live'>" + d.MaterialName + "</a>：</dt>");
+                var dd = $("<dd>" + d.Quantity + " " + d.UnitName + " <a href='javascript:delMaterial(@ProductID, " + d.MaterialID + ")' onclick=\"return confirm('删除这个材料？')\">[删除]</a></dd>");
+                $("#ProductMaterial").append(dt).append(dd);
+            });
+        });
+    }
+    // 首次加载
+    loadProductMaterial();
+    // 添加产品材料
+    function addMaterial() {
+        $.jBox("id:materialEditor", {
+            title: "添加材料",
+            submit: function (v, h, f) {
+                $.get("/Admin/ProductMaterial/Add?ProductID=@ProductID&MaterialID=" + f.MaterialID + "&Quantity=" + f.Quantity, function(data){
+                    if (data == "ok") loadProductMaterial();
+                });
+            }
+        });
+    }
+    // 删除产品材料
+    function delMaterial(pid, mid) {
+        $.post("/Admin/ProductMaterial/Delete?ProductID=" + pid + "&MaterialID=" + mid, function(data){
+            if (data == "ok") loadProductMaterial();
+        });
+    }
+</script>
+
+<h2>制作过程</h2>
+<div class="section">
+    <form method="post" action="~/Admin/ProductUpdate/@p.ProductID/Process">
+        <textarea id="Process" name="Process">@p.Process</textarea>
+        <br /><br />
+        <input type="submit" value=" 保 存 " class="button" />
+    </form>
+</div>
+<script>
+    var editProcess = new FCKeditor("Process");
+    editProcess.Width = 640;
+    editProcess.Height = 300;
+    editProcess.ToolbarSet = "Doc";
+    editProcess.ReplaceTextarea();
+</script>

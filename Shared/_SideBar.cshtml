@@ -1,0 +1,60 @@
+﻿<div class="wish">
+    <div class="title">宝妈寄语</div>
+    <p>
+        欢迎光临，感谢大家的惠顾。网站试运行中，有问题或建议请随时联系我们。<br/>
+        小区试吃活动即将推出，欢迎大家短信或QQ报名^_^
+    </p>
+</div>
+
+<h2>配送说明</h2>
+<div class="section">
+    <p>
+        柏林爱乐小区周边上门配送<br/>
+        其他地区顺风速递配送
+    </p>
+</div>
+
+<h2>联系我们</h2>
+<div class="section">
+    <p>
+        手机：18610688199<br/>
+        ＱＱ：63537529<br/>
+        微博：<a href="http://weibo.com/feifan0815" class="live" target="_blank">@@Emma爱生活</a>
+    </p>
+</div>
+
+<h2>意见反馈</h2>
+<div class="section">
+    <p id="feedbackWelcome" class="mb20">对双宝餐有什么建议？把你的想法告诉我们，欢迎您提供宝贵的意见！</p>
+    <div class="center"><a href="javascript:feedback()" class="button">意见反馈</a></div>
+</div>
+
+<script>
+    // 意见反馈
+    function feedback() {
+        if (isLogin) {
+            var html = "<div class='pd10'>" + $("#feedbackWelcome").html() + "<br/><br/><textarea name='Suggestion' cols=60 rows=10></textarea></div>";
+            $.jBox(html, {
+                title: "意见反馈",
+                width: 500,
+                submit: function (v, h, f) {
+                    if (f.Suggestion == "") {
+                        alert("不说点什么吗？");
+                        return false;
+                    }
+                    $.jBox.tip("正在提交，请稍候...", "loading");
+                    $.post("/Feedback", { Suggestion: f.Suggestion }, function (data) {
+                        if (data == "ok") $.jBox.tip("提交完成，感谢您的意见！", "success");
+                    });
+                }
+            });
+        }
+        else {
+            $.jBox.confirm("请先登录再提交意见反馈。<br/><br/>要现在去登录吗？", "意见反馈", function (v, h, f) {
+                if (v == "ok") {
+                    window.location = "/Login";
+                }
+            })
+        }
+    }
+</script>

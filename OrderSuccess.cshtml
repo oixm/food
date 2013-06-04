@@ -1,0 +1,18 @@
+﻿@{
+    // 参数
+    int OrderID = UrlData[0].AsInt(0);
+       
+    // 布局和标题
+    Layout = "~/Layout/_FullLayout.cshtml";
+    Page.Title = "订单提交成功";
+}
+
+<h1>订单提交成功</h1>
+
+<div class="section">
+    <div class="mb20">您的订单已经成功提交.</div>
+    <div class="mb20">
+        <a href="~/My/OrderDetail/@OrderID" class="button">查看订单</a>
+        <a href="~/Food" class="live ml20">返回首页</a>
+    </div>
+</div>

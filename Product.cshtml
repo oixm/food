@@ -1,0 +1,55 @@
+﻿@{
+    int ProductID = UrlData[0].AsInt(0);
+    var p = Product.GetProductByID(ProductID);
+    
+    if (ProductID == 0) { Response.Redirect("~/Food"); }
+
+    // 布局和标题
+    Layout = "~/Layout/_SiteLayout.cshtml";
+    Page.Title = p.ProductName;
+}
+
+<div class="section prodshow">
+    <img src="~/Upload/Food/@p.Photo" class="product" />
+    <h1>@p.ProductName</h1>
+    <div>类型：@p.CategoryName</div>
+    <div>价格：<span class="price">@p.Price.ToString("￥#,##0.00") 元</span></div>
+    <div>可购数量：@p.Inventory 份</div>
+    @if (@p.Hot == 1) {
+        <div class="hot">热销餐品</div>
+    }
+    <div>
+    @if ((ProductStatus)@p.Status == ProductStatus.OnSale) {
+        <a href="~/CartAction/Add/@ProductID" class="addcart"></a>
+    }
+    @if ((ProductStatus)@p.Status == ProductStatus.OutOfStock) {
+        <b>该产品已售完</b>
+    }
+    </div>
+</div>
+
+<h2>“@p.ProductName” 介绍</h2>
+<div class="section">
+    <p>@Html.Raw(p.Description)</p>
+</div>
+
+<h2>“@p.ProductName” 特征</h2>
+<div class="section">
+    <p>@Html.Raw(p.Story)</p>
+</div>
+
+<h2>“@p.ProductName” 制作材料</h2>
+<div class="section">
+    <dl class="w_100_400">
+    @foreach (var m in Product.GetProductMaterial(ProductID))
+    {
+        <dt><a href="~/Material/@m.MaterialID" class="live">@m.MaterialName</a>：</dt>
+        <dd>@m.Quantity @m.UnitName</dd>
+    }
+    </dl>
+</div>
+
+<h2>“@p.ProductName” 制作过程</h2>
+<div class="section">
+    <p>@Html.Raw(p.Process)</p>
+</div>

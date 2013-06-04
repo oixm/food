@@ -1,0 +1,76 @@
+﻿@{
+    // 登录校验
+    Authority.CheckLogin(true);
+
+    // 用户信息
+    var u = Users.GetUserByID(Authority.CurrentUser.UserID);
+        
+    // 布局和标题
+    Layout = "~/Layout/_MyLayout.cshtml";
+    Page.Title = "会员信息";
+}
+
+<script>
+    $(document).ready(function () {
+        //$("#tabs").tabs();
+    });
+</script>
+
+<div class="breadcrumb">
+    <a href="~/My/">会员中心</a>
+    >
+    <b>会员信息</b>
+</div>
+
+<h2>会员信息</h2>
+<div id="tabs" class="section">
+    <!--
+    <ul>
+        <li><a href="#tab1">基本信息</a></li>
+        <li><a href="#tab2">详细信息</a></li>
+        <li><a href="#tab3">兴趣爱好</a></li>
+    </ul>
+    -->
+    <div id="tab1">
+        <dl class="w_100_600">
+            <dt>帐号：</dt>
+            <dd>@u.LoginName</dd>
+            <dt>昵称：</dt>
+            <dd>@u.UserName</dd>
+            <dt>Email：</dt>
+            <dd>@u.Email</dd>
+            <dt>手机号：</dt>
+            <dd>@u.Mobile</dd>
+            <dt>最后登录：</dt>
+            <dd>@u.LastLoginTime.ToString("yyyy-MM-dd HH:mm:ss")</dd>
+        </dl>
+    </div>
+    <!--
+    <div id="tab2">
+        <dl class="w_100_600">
+            <dt>生日：</dt>
+            <dd>@((u.Birthday == null) ? "" : u.Birthday.ToString("yyyy-MM-dd"))</dd>
+            <dt>性别：</dt>
+            <dd>@((u.Sex == null) ? "" : EnumUtils.GetDescription(typeof(SexType), u.Sex))</dd>
+            <dt>身高：</dt>
+            <dd>@u.Height cm</dd>
+            <dt>体重：</dt>
+            <dd>@u.Weight kg</dd>
+            <dt>职业：</dt>
+            <dd>@u.JobName</dd>
+            <dt>地区：</dt>
+            <dd>@u.AreaName</dd>
+            <dt>自我介绍：</dt>
+            <dd>@u.Intro</dd>
+        </dl>
+    </div>
+    <div id="tab3">
+        <dl class="w_100_600">
+        @foreach (var h in Users.GetUserHobby(u.UserID)) {
+            <dt>兴趣：</dt>
+            <dd>@h.HobbyName</dd>
+        }
+        </dl>
+    </div>
+    -->
+</div>

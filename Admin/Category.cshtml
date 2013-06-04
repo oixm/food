@@ -1,0 +1,88 @@
+﻿@{
+    // 登录校验
+    Admin.CheckLogin();
+
+    // 提交
+    string action = UrlData[0];
+    if (action != "")
+    {
+        switch (action)
+        {
+            case "Add":             // 新增
+                Product.AddCategory(UrlData[1]);
+                break;
+            case "Update":          // 修改
+                Product.UpdateCategory(UrlData[1].AsInt(0), UrlData[2]);
+                break;
+            case "Delete":          // 删除
+                Product.DeleteCategory(UrlData[1].AsInt(0));
+                break;
+        }
+        Response.Redirect("~/Admin/Category");
+    }
+    
+    // 所有类型
+    var category = Product.GetAllCategory();
+
+    // 布局和标题
+    Layout = "~/Layout/_AdminLayout.cshtml";
+    Page.Title = "类型管理";
+}
+
+<script>
+    // 新增
+    function add() {
+        var html = "<div class='pd20'>请输入新的类型名称：<input name='CategoryName' value='新的类型' class='t150'></div>";
+        $.jBox(html, {
+            title: "新增类型",
+            submit: function (v, h, f) {
+                window.location = "/Admin/Category/Add/" + encodeURI(f.CategoryName);
+            }
+        });
+    }
+    // 修改
+    function update(cid, cname) {
+        var html = "<div class='pd20'>请输入新的类型名称：<input name='CategoryName' value='" + cname + "' class='t150'></div>";
+        $.jBox(html, {
+            title: "修改类型",
+            submit: function (v, h, f) {
+                window.location = "/Admin/Category/Update/" + cid + "/" + encodeURI(f.CategoryName);
+            }
+        });
+    }
+    // 删除
+    function del(cid, cname) {
+        $.jBox.confirm("确定要删除类型 “" + cname + "” 吗？", "删除类型", function (v, h, f) {
+            if (v == "ok") window.location = "/Admin/Category/Delete/" + cid;
+        });
+    }
+</script>
+
+<div class="breadcrumb">
+    <a href="~/Admin/">管理中心</a>
+    >
+    <b>类型管理</b>
+</div>
+
+<h2>所有类型</h2>
+<div class="section">
+    <table width="100%" cellspacing="1" class="simple">
+    <tr>
+        <th width="60">ID</th>
+        <th>类型</th>
+        <th width="200">操作</th>
+    </tr>
+    @foreach (var c in category)
+    {
+        <tr>
+            <td align="center">@c.CategoryID</td>
+            <td align="center">@c.CategoryName</td>
+            <td align="center">　
+                <a href="javascript:update(@c.CategoryID, '@c.CategoryName')">[修改]</a>
+                <a href="javascript:del(@c.CategoryID, '@c.CategoryName')">[删除]</a>
+            </td>
+        </tr>
+    }
+    </table>
+    <div class="mt20"><a href="javascript:add()" class="button">新增类型</a></div>
+</div>

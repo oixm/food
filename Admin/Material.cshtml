@@ -1,0 +1,95 @@
+﻿@{
+    // 登录校验
+    Admin.CheckLogin();
+
+    // 提交
+    string action = UrlData[0];
+    if (action != "")
+    {
+        switch (action)
+        {
+            case "Add":             // 新增
+                decimal MaterialID = Product.AddMaterial(UrlData[1], UrlData[2].AsInt(0));
+                Response.Redirect("~/Admin/MaterialDetail/" + MaterialID);
+                break;
+            case "Delete":          // 删除
+                Product.DeleteMaterial(UrlData[1].AsInt(0));
+                Response.Redirect("~/Admin/Material");
+                break;
+        }
+    }
+    
+    // 所有类型
+    var material = Product.GetAllMaterials();
+
+    // 布局和标题
+    Layout = "~/Layout/_AdminLayout.cshtml";
+    Page.Title = "制作材料管理";
+}
+
+<script>
+    // 新增
+    function add() {
+        $.jBox("id:editpanel", {
+            title: "新增制作材料",
+            submit: function (v, h, f) {
+                window.location = "/Admin/Material/Add/" + encodeURI(f.MaterialName) + "/" + f.UnitID;
+            }
+        });
+    }
+    // 删除
+    function del(mid, mname) {
+        $.jBox.confirm("确定要删除材料 “" + mname + "” 吗？", "删除制作材料", function (v, h, f) {
+            if (v == "ok") window.location = "/Admin/Material/Delete/" + mid;
+        });
+    }
+</script>
+
+<div id="editpanel" class="hidden">
+    <div class="pd20">
+        制作材料：<input name="MaterialName" value="新的材料名" class="t80" />
+        <br/><br/>
+        计量单位：
+        <select name="UnitID">
+        @foreach (var u in Product.GetUnitsByType(1))
+        {
+            <option value="@u.UnitID">@u.UnitName</option>
+        }
+        </select>
+        <a href="~/Admin/Unit?UnitType=1" class="live ml10">计量单位管理</a>
+    </div>
+</div>
+
+<div class="breadcrumb">
+    <a href="~/Admin/">管理中心</a>
+    >
+    <b>制作材料管理</b>
+</div>
+
+<h2>所有制作材料</h2>
+<div class="section">
+    <table width="100%" cellspacing="1" class="simple">
+    <tr>
+        <th width="60">ID</th>
+        <th>材料名</th>
+        <th>计量单位</th>
+        <th width="150">操作</th>
+    </tr>
+    @foreach (var m in material)
+    {
+        <tr>
+            <td align="center">@m.MaterialID</td>
+            <td align="center">@m.MaterialName</td>
+            <td align="center">@m.UnitName</td>
+            <td align="center">
+                <a href="~/Admin/MaterialDetail/@m.MaterialID">[修改]</a>
+                <a href="javascript:del(@m.MaterialID, '@m.MaterialName')">[删除]</a>
+            </td>
+        </tr>
+    }
+    </table>
+    <div class="mt20">
+        <a href="javascript:add()" class="button">新增制作材料</a>
+        <a href="~/Admin/Unit?UnitType=1" class="live ml20">计量单位管理</a>
+    </div>
+</div>

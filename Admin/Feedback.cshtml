@@ -1,0 +1,64 @@
+﻿@{
+    // 登录校验
+    Admin.CheckLogin();
+
+    // 提交
+    string action = UrlData[0];
+    if (action == "Delete")
+    {
+        Feedback.Delete(UrlData[1].AsInt(0));
+        Response.Redirect("~/Admin/Feedback");
+    }
+    
+    // 参数
+    IEnumerable<dynamic> list = Feedback.GetAllFeedbacks();
+
+    // 布局和标题
+    Layout = "~/Layout/_AdminLayout.cshtml";
+    Page.Title = "意见反馈";
+}
+
+<div class="breadcrumb">
+    <a href="~/Admin/">管理中心</a>
+    >
+    <b>意见反馈</b>
+</div>
+
+<h2>所有意见反馈</h2>
+<div class="section">
+    <table width="100%" cellspacing="1" class="simple">
+    <tr>
+        <th>ID</th>
+        <th>昵称</th>
+        <th>意见反馈</th>
+        <th>Email</th>
+        <th>手机号</th>
+        <th>时间</th>
+        <th>操作</th>
+    </tr>
+    @foreach (var f in list)
+    {
+        <tr>
+            <td align="center">@f.ID</td>
+            <td align="center" class="feedbackUser">@f.UserName</td>
+            <td>
+                <div class="summary feedbackSummary"><a href="javascript:void(0)" class="live">@f.Suggestion</a></div>
+                (@f.Suggestion.Length 字)
+            </td>
+            <td align="center">@f.Email</td>
+            <td align="center">@f.Mobile</td>
+            <td align="center">@f.PostTime.ToString("yyyy-MM-dd")<br />@f.PostTime.ToString("HH:mm:ss")</td>
+            <td align="center"><a href="~/Admin/Feedback/Delete/@f.ID" onclick="return confirm('确定要删除吗？')">[删除]</a></td>
+        </tr>
+    }
+    </table>
+</div>
+
+<script>
+    $(".feedbackSummary a").on("click", function () {
+        var user = $(this).closest("tr").find(".feedbackUser").html();
+        var html = "<p>" + $(this).html().replace(/\n/g, "<br/>") + "</p>";
+        $.jBox.info(html, user + "的意见反馈", { width: 500 });
+    });
+</script>
+

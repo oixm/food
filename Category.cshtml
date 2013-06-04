@@ -1,0 +1,26 @@
+﻿@{
+    int CategoryID = UrlData[0].AsInt(0);
+    var c = Product.GetCategoryByID(CategoryID);
+    
+    // 布局和标题
+    Layout = "~/Layout/_SiteLayout.cshtml";
+    Page.Title = c.CategoryName;
+    Page.NavID = CategoryID;
+}
+
+<div class="section">
+    <ul class="prdlist">
+    @foreach (var p in Product.GetProductsByCategoryID(c.CategoryID)) {
+        <li>
+            <a href="~/Product/@p.ProductID"><img src="~/Upload/Food/@p.Photo" class="product" /></a>
+            <div class="title">
+                <a href="~/Product/@p.ProductID">@p.ProductName</a>
+                @if (p.Hot == 1) {
+                    <span class="hot">(热销餐品)</span>
+                }
+            </div>
+            <div class="price">@p.Price.ToString("￥#,##0.00")</div>
+        </li>
+    }
+    </ul>
+</div>
