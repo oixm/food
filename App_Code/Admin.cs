@@ -37,7 +37,7 @@ public class Admin
     /// </summary>
     public static LoginStatus Login(string LoginPass)
     {
-        if (LoginPass != "123456")
+        if (LoginPass != "2007-3-9")
         {
             return LoginStatus.InvalidLoginPass;    // 密码错误
         }
