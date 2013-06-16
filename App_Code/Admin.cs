@@ -37,7 +37,8 @@ public class Admin
     /// </summary>
     public static LoginStatus Login(string LoginPass)
     {
-        if (LoginPass != "2007-3-9")
+        string AdminPass = System.Configuration.ConfigurationManager.AppSettings["AdminPass"];
+        if (LoginPass != AdminPass)
         {
             return LoginStatus.InvalidLoginPass;    // 密码错误
         }
