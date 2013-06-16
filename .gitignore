@@ -109,3 +109,4 @@ UpgradeLog*.XML
 
 /Web.Config.remote
 /Welcome.cshtml
+/web.config
