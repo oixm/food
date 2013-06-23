@@ -40,7 +40,7 @@
         $.jBox(html, {
             title: "新增计量单位",
             submit: function (v, h, f) {
-                window.location = "/Admin/Unit/Add?UnitType=@UnitType&UnitName=" + encodeURI(f.UnitName);
+                window.location = "/Admin/Unit/Add?UnitType=@UnitType&UnitName=" + encodeURIComponent(f.UnitName);
             }
         });
     }
@@ -50,7 +50,7 @@
         $.jBox(html, {
             title: "修改计量单位",
             submit: function (v, h, f) {
-                window.location = "/Admin/Unit/Update?UnitType=@UnitType&UnitID=" + uid + "&UnitName=" + encodeURI(f.UnitName);
+                window.location = "/Admin/Unit/Update?UnitType=@UnitType&UnitID=" + uid + "&UnitName=" + encodeURIComponent(f.UnitName);
             }
         });
     }

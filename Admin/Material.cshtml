@@ -33,7 +33,7 @@
         $.jBox("id:editpanel", {
             title: "新增制作材料",
             submit: function (v, h, f) {
-                window.location = "/Admin/Material/Add/" + encodeURI(f.MaterialName) + "/" + f.UnitID;
+                window.location = "/Admin/Material/Add/" + encodeURIComponent(f.MaterialName) + "/" + f.UnitID;
             }
         });
     }

@@ -1,0 +1,91 @@
+﻿@{
+    // 登录校验
+    Admin.CheckLogin();
+
+    // 提交修改
+    string action = UrlData[0];
+    if (action != "") {
+        switch (action) {
+            case "Update":
+                Slide.Update(Request["ID"].AsInt(0), Request["Title"], Request["Link"], Request["Sort"].AsInt(0));
+                break;
+            case "Delete":
+                Slide.Delete(Request["ID"].AsInt(0));
+                break;
+        }
+    }
+    
+    // 参数
+    IEnumerable<dynamic> Slides = Slide.GetSlides();
+
+    // 布局和标题
+    Layout = "~/Layout/_AdminLayout.cshtml";
+    Page.Title = "幻灯片";
+}
+
+<script>
+    // 修改
+    function update(id, title, link, sort) {
+        $.jBox("id:editpanel", {
+            title: "修改幻灯片",
+            loaded: function (h) {
+                h.find("#Title").val(title);
+                h.find("#Link").val(link);
+                h.find("#Sort").val(sort);
+            },
+            submit: function (v, h, f) {
+                window.location = "/Admin/Slide/Update?ID=" + id + "&Title=" + encodeURIComponent(f.Title) + "&Link=" + encodeURIComponent(f.Link) + "&Sort=" + f.Sort;
+            }
+        });
+    }
+    // 删除
+    function del(id) {
+        window.location = "/Admin/Slide/Delete?ID=" + id;
+    }
+</script>
+
+<div id="editpanel" class="hidden">
+    <div class="pd20">
+        标题：<input id="Title" name="Title" class="t150" />
+        <br/><br>
+        链接：<input id="Link" name="Link" class="t150" />
+        <br/><br>
+        排序：<input id="Sort" name="Sort" class="t80" />
+    </div>
+</div>
+
+<div class="breadcrumb">
+    <a href="~/Admin/">管理中心</a>
+    >
+    <b>幻灯片管理</b>
+</div>
+
+<h2>首页幻灯片</h2>
+<div class="section">
+    <table width="100%" cellspacing="1" class="simple">
+    <tr>
+        <th>ID</th>
+        <th>图片</th>
+        <th>标题</th>
+        <th>链接</th>
+        <th>排序</th>
+        <th>操作</th>
+    </tr>
+    @foreach (var s in Slides) {
+        <tr>
+            <td align="center">@s.ID</td>
+            <td>
+                <a href="@s.Link" title="@s.Title" target="_blank"><img src="~/Upload/Slide/@s.ImageUrl" class="thumb" /></a>
+            </td>
+            <td>@s.Title</td>
+            <td>@s.Link</td>
+            <td align="center">@s.Sort</td>
+            <td align="center">
+                <a href="javascript:update(@s.ID, '@s.Title', '@s.Link', @s.sort)">[修改]</a>
+                <a href="javascript:del(@s.ID)" onclick="return confirm('确定要删除？')">[删除]</a>
+            </td>
+        </tr>
+    }
+    </table>
+    <div class="mt20"><a href="~/Admin/SlideAdd" class="button">新增幻灯片</a></div>
+</div>

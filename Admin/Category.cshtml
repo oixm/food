@@ -36,7 +36,7 @@
         $.jBox(html, {
             title: "新增类型",
             submit: function (v, h, f) {
-                window.location = "/Admin/Category/Add/" + encodeURI(f.CategoryName);
+                window.location = "/Admin/Category/Add/" + encodeURIComponent(f.CategoryName);
             }
         });
     }
@@ -46,7 +46,7 @@
         $.jBox(html, {
             title: "修改类型",
             submit: function (v, h, f) {
-                window.location = "/Admin/Category/Update/" + cid + "/" + encodeURI(f.CategoryName);
+                window.location = "/Admin/Category/Update/" + cid + "/" + encodeURIComponent(f.CategoryName);
             }
         });
     }

@@ -32,7 +32,7 @@
     @foreach (var p in ProductList)
     {
         <tr>
-            <td align="center"><a href="#">@p.ProductID</a></td>
+            <td align="center">@p.ProductID</td>
             <td>
                 <a href="~/Product/@p.ProductID" title="@p.ProductName" target="_blank"><img src="~/Upload/Food/@p.Photo" class="thumb" /></a>
                 @p.ProductName

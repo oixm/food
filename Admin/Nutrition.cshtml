@@ -39,7 +39,7 @@
                 h.find("select")[0].selectedIndex = 0;
             },
             submit: function (v, h, f) {
-                window.location = "/Admin/Nutrition/Add/" + encodeURI(f.NutritionName) + "/" + f.UnitID;
+                window.location = "/Admin/Nutrition/Add/" + encodeURIComponent(f.NutritionName) + "/" + f.UnitID;
             }
         });
     }
@@ -52,7 +52,7 @@
                 h.find("select").val(uid);
             },
             submit: function (v, h, f) {
-                window.location = "/Admin/Nutrition/Update/" + nid + "/" + encodeURI(f.NutritionName) + "/" + f.UnitID;
+                window.location = "/Admin/Nutrition/Update/" + nid + "/" + encodeURIComponent(f.NutritionName) + "/" + f.UnitID;
             }
         });
     }
