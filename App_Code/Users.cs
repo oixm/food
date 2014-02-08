@@ -55,7 +55,7 @@ public class Users
                     Left Join UserInfo b On a.UserID = b.UserID
                     Left Join Job c On b.JobID = c.JobID
                     Left Join Area d On b.AreaID = d.AreaID
-                    Order By UserID Desc";
+                    Order By a.UserID Desc";
         return db.Query(sql);
     }
 

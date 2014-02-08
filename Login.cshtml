@@ -17,7 +17,7 @@
         status = Authority.Login(LoginName, LoginPass);
         if (status == LoginStatus.Success) {
             // 登录成功
-            if (URL == null) { URL = "~/Food"; }
+            if (URL == null) { URL = "~/"; }
             Response.Redirect(URL);
         }
     }

@@ -1,0 +1,27 @@
+﻿@{
+    var db = Database.Open("food");
+    var daylogs = db.Query("Select * From DayLog");
+}
+
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="gb2312" />
+        <title>Welcome</title>
+    </head>
+    <body>
+        开始两千万计划了，真的是想了很久，要开始了哦，准备好了吗？会每天记录下都做了些什么，看到每一天的成长。<br/>
+        ~~~~~~~-2012/6/22:想法，想法，再想法<br/>
+        <ul>
+            @foreach (var daylog in daylogs)
+            {
+                <li>
+                    @daylog.Title;
+                    @daylog.Body;
+                    @daylog.LogDate; 
+                </li>         
+            }
+        </ul>
+    </body>
+</html>

@@ -2,7 +2,7 @@
     int ProductID = UrlData[0].AsInt(0);
     var p = Product.GetProductByID(ProductID);
     
-    if (ProductID == 0) { Response.Redirect("~/Food"); }
+    if (ProductID == 0) { Response.Redirect("~/"); }
 
     // 布局和标题
     Layout = "~/Layout/_SiteLayout.cshtml";
